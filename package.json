@@ -13,6 +13,7 @@
     "android",
     "ios",
     "dist",
+    "src",
     "RNTuyaSdk.podspec"
   ],
   "scripts": {
