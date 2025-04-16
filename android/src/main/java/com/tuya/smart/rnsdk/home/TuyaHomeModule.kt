@@ -234,7 +234,7 @@ class TuyaHomeModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
             }
 
             override fun onError(code: String?, error: String?) {
-                promise.reject(code, error)
+                promise.reject(code ?: "", error)
             }
         }
     }
@@ -247,7 +247,7 @@ class TuyaHomeModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
             }
 
             override fun onError(code: String?, error: String?) {
-                promise.reject(code, error)
+                promise.reject(code ?: "", error)
             }
         }
     }
@@ -259,7 +259,7 @@ class TuyaHomeModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
             }
 
             override fun onError(code: String?, error: String?) {
-                promise.reject(code, error)
+                promise.reject(code ?: "", error)
             }
         }
     }
