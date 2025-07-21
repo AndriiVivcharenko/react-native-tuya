@@ -60,7 +60,7 @@ RCT_EXPORT_METHOD(startBluetoothLEScan:(RCTPromiseResolveBlock)resolver rejecter
 }
 
 RCT_EXPORT_METHOD(stopBluetoothScan:(RCTPromiseResolveBlock)resolver rejecter:(RCTPromiseRejectBlock)rejecter) {
-  [[ThingSmartBLEManager sharedInstance] stopListening:YES];
+  [[ThingSmartBLEManager sharedInstance] stopListening: NO];
 }
 
 @end

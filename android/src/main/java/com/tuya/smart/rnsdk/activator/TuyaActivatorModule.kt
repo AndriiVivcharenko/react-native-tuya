@@ -62,8 +62,8 @@ class TuyaActivatorModule(reactContext: ReactApplicationContext) :
         this.reactApplicationContext.getJSModule(RCTDeviceEventEmitter::class.java).emit(
           ON_SCAN_BEAN_EVENT, TuyaReactUtils.parseToWritableMap(bean)
         )
+        promise.resolve(TuyaReactUtils.parseToWritableMap(bean))
       };
-      promise.resolve(true)
     }
   }
 

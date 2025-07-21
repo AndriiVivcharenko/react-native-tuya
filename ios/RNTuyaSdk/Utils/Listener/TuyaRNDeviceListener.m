@@ -126,6 +126,7 @@ static inline BOOL TuyaRNDeviceListenTypeAvailable(TuyaRNDeviceListenType type) 
   if (listenType & TuyaRNDeviceListenType_DeviceInfo) {
     NSDictionary *dic = @{
                           @"devId": deviceId,
+                          @"deviceData": [device.deviceModel yy_modelToJSONObject],
                           @"type": @"onDevInfoUpdate"
                           };
     [TuyaRNEventEmitter ty_sendEvent:[kTYEventEmitterDeviceInfoEvent stringByAppendingFormat:@"//%@", deviceId] withBody:dic];

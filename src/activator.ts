@@ -104,7 +104,7 @@ export function stopConfig() {
 
 export function startBluetoothScan(params: StartLeScanParams) {
   if (Platform.OS === 'ios') {
-    return tuyaBLEScanner.startBluetoothLEScan();
+    return tuyaBLEScanner.startBluetoothScan();
   }
   return tuya.startBluetoothScan(params);
 }

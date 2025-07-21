@@ -90,6 +90,7 @@ class TuyaDeviceModule(reactContext: ReactApplicationContext) : ReactContextBase
                     val map = Arguments.createMap()
                     map.putString("devId", devId)
                     map.putString("type", "onDevInfoUpdate");
+                    map.putMap("deviceData", TuyaReactUtils.parseToWritableMap(ThingHomeSdk.getDataInstance().getDeviceBean(devId)))
                     BridgeUtils.devListener(reactApplicationContext, map, params.getString(DEVID) as String)
                 }
             })

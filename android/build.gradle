@@ -46,14 +46,14 @@ configurations.all {
 }
 
 dependencies {
-    implementation 'com.alibaba:fastjson:1.2.83'
+    implementation 'com.alibaba:fastjson:1.1.67.android'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.facebook.react:react-native:+'
 
     // The latest stable App SDK for Android.
-    implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.11.0'
-    implementation 'com.facebook.soloader:soloader:0.10.5'
-    implementation 'com.thingclips.smart:thingsmart:5.1.0'
+    implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.14.9'
+    implementation 'com.facebook.soloader:soloader:0.10.4+'
+    implementation 'com.thingclips.smart:thingsmart:5.5.2'
 }
 repositories {
     maven {

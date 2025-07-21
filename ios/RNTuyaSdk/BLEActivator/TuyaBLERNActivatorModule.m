@@ -67,7 +67,7 @@ RCT_EXPORT_METHOD(initActivator:(NSDictionary *)params resolver:(RCTPromiseResol
 - (void)bleWifiActivator:(ThingSmartBLEWifiActivator *)activator didReceiveBLEWifiConfigDevice:(ThingSmartDeviceModel *)deviceModel error:(NSError *)error {
   if (!error && deviceModel) {
     if (activatorInstance.promiseResolveBlock) {
-      self.promiseResolveBlock([deviceModel yy_modelToJSONObject]);
+      activatorInstance.promiseResolveBlock([deviceModel yy_modelToJSONObject]);
     }
   }
   if (error) {
