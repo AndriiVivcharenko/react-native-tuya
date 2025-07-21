@@ -206,7 +206,7 @@ class TuyaActivatorModule(reactContext: ReactApplicationContext) :
           }
 
           override fun onFailure(errorCode: String?, errorMsg: String?) {
-            promise.reject(errorCode, errorMsg);
+            promise.reject(errorCode ?: "", errorMsg);
           }
         })
     }
@@ -227,7 +227,7 @@ class TuyaActivatorModule(reactContext: ReactApplicationContext) :
           override fun onQRCodeSuccess(qrcodeUrl: String?) {}
 
           override fun onError(errorCode: String?, errorMsg: String?) {
-            promise.reject(errorCode, errorMsg);
+            promise.reject(errorCode ?: "", errorMsg);
           }
         });
 

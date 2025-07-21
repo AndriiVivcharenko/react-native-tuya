@@ -207,7 +207,7 @@ class TuyaShareModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
             }
 
             override fun onError(p0: String?, p1: String?) {
-                promise.reject(p0, p1)
+                promise.reject(p0 ?: "", p1)
             }
         }
     }

@@ -278,7 +278,7 @@ class TuyaSceneModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
                         }
 
                         override fun onError(code: String?, error: String?) {
-                            promise.reject(code, error)
+                            promise.reject(code ?: "", error)
                         }
                     }
             )
@@ -493,7 +493,7 @@ class TuyaSceneModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
                         }
 
                         override fun onError(code: String?, error: String?) {
-                            promise.reject(code, error)
+                            promise.reject(code ?: "", error)
                         }
                     }
             )
