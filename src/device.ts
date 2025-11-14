@@ -1,5 +1,6 @@
 import { NativeModules, EmitterSubscription } from 'react-native';
 import { addEvent, bridge, DEVLISTENER } from './bridgeUtils';
+import { DeviceSchemaItem } from './home';
 
 const tuya = NativeModules.TuyaDeviceModule;
 
@@ -9,10 +10,22 @@ export type DeviceBean = {
   verSw: string;
   name: string;
   dps: DeviceDps;
-  uuid?: string;
   deviceType?: number;
-  mac?: string;
   address?: string;
+  homeId: number;
+  isOnline: boolean;
+  homeDisplayOrder: number;
+  roomId: number;
+  mac: string;
+  ip: string;
+  uuid: string;
+  timezoneId: string;
+  schemaMap: Record<number, DeviceSchemaItem>;
+  productBean: {
+    schemaInfo: {
+      dpCodeSchemaMap: Record<string, DeviceSchemaItem>;
+    };
+  };
 };
 
 export type DevListenerParams = {
@@ -27,7 +40,8 @@ export type DevListenerType =
   | 'onDevInfoUpdate'
   | 'onFirmwareUpgradeSuccess'
   | 'onFirmwareUpgradeFailure'
-  | 'onFirmwareUpgradeProgress';
+  | 'onFirmwareUpgradeProgress'
+  | 'onFirmwareUpgradeStatus';
 
 let devListenerSubs: { [devId: string]: EmitterSubscription } = {};
 
@@ -37,7 +51,7 @@ export function registerDevListener(
   callback: (data: any) => void
 ) {
   tuya.registerDevListener(params);
-  const sub = addEvent(bridge(DEVLISTENER, params.devId), data => {
+  const sub = addEvent(bridge(DEVLISTENER, params.devId), (data) => {
     if (data.type === type) {
       callback(data);
     }
@@ -90,4 +104,12 @@ export function getDataPointStat(
   params: GetDataPointStatsParams
 ): Promise<any> {
   return tuya.getDataPointStat(params);
+}
+
+export type GetWifiSignalStrengthParams = { devId: string };
+
+export function getWifiSignalStrength(
+  params: GetWifiSignalStrengthParams
+): Promise<number> {
+  return tuya.getWifiSignalStrength(params);
 }

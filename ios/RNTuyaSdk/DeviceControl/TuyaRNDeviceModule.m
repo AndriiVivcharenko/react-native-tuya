@@ -32,10 +32,13 @@ RCT_EXPORT_MODULE(TuyaDeviceModule)
  设备监听开启
  */
 RCT_EXPORT_METHOD(registerDevListener:(NSDictionary *)params resolver:(RCTPromiseResolveBlock)resolver rejecter:(RCTPromiseRejectBlock)rejecter) {
-
-  self.smartDevice  = [self smartDeviceWithParams:params];
-  //监听设备
-  [TuyaRNDeviceListener registerDevice:self.smartDevice type:TuyaRNDeviceListenType_DeviceInfo];
+ThingSmartDevice *d = [self smartDeviceWithParams:params];
+  if (d == nil) {
+      rejecter(@"cannot add device listener", @"devId is nil or not exist", nil);
+  } else {
+      //监听设备
+      [TuyaRNDeviceListener registerDevice:d type:TuyaRNDeviceListenType_DeviceInfo];
+  }
 }
 
 /**
@@ -169,7 +172,7 @@ RCT_EXPORT_METHOD(startOta:(NSDictionary *)params resolver:(RCTPromiseResolveBlo
 RCT_EXPORT_METHOD(getOtaInfo:(NSDictionary *)params resolver:(RCTPromiseResolveBlock)resolver rejecter:(RCTPromiseRejectBlock)rejecter) {
 
     ThingSmartDevice *device = [ThingSmartDevice deviceWithDeviceId:params[@"devId"]];
-    [device getFirmwareUpgradeInfo:^(NSArray<ThingSmartFirmwareUpgradeModel *> *upgradeModelList) {
+    [device checkFirmwareUpgrade:^(NSArray<ThingSmartFirmwareUpgradeModel *> *upgradeModelList) {
 
         NSMutableArray *res = [NSMutableArray array];
         for (ThingSmartFirmwareUpgradeModel *item in upgradeModelList) {
@@ -180,11 +183,65 @@ RCT_EXPORT_METHOD(getOtaInfo:(NSDictionary *)params resolver:(RCTPromiseResolveB
           resolver(res);
         }
 
-        NSLog(@"getFirmwareUpgradeInfo success");
+        NSLog(@"checkFirmwareUpgrade success");
     } failure:^(NSError *error) {
         [TuyaRNUtils rejecterWithError:error handler:rejecter];
     }];
 
+}
+
+RCT_EXPORT_METHOD(startFirmwareUpgrade:(NSDictionary *)params resolver:(RCTPromiseResolveBlock)resolver rejecter:(RCTPromiseRejectBlock)rejecter) {
+    NSString *deviceId = params[kTuyaDeviceModuleDevId];
+
+    if (![deviceId isKindOfClass:[NSString class]] || deviceId.length == 0) {
+        NSError *error = [NSError errorWithDomain:@"com.hisense.rntuya"
+                                             code:1001
+                                         userInfo:@{NSLocalizedDescriptionKey: @"The device ID is invalid or missing."}];
+        [TuyaRNUtils rejecterWithError:error handler:rejecter];
+        return;
+    }
+
+    ThingSmartDevice *device = [ThingSmartDevice deviceWithDeviceId:params[@"devId"]];
+    if (!device) {
+        NSError *error = [NSError errorWithDomain:@"com.hisense.rntuya"
+                                             code:1002
+                                         userInfo:@{NSLocalizedDescriptionKey: @"The device not found."}];
+        [TuyaRNUtils rejecterWithError:error handler:rejecter];
+    }
+
+    [device checkFirmwareUpgrade:^(NSArray<ThingSmartFirmwareUpgradeModel *> *upgradeModelList) {
+        if (upgradeModelList.count == 0) {
+            NSError *error = [NSError errorWithDomain:@"com.hisense.rntuya"
+                                                 code:1003
+                                             userInfo:@{NSLocalizedDescriptionKey: @"No updates available."}];
+            [TuyaRNUtils rejecterWithError:error handler:rejecter];
+            return;
+        }
+
+        [device startFirmwareUpgrade:upgradeModelList];
+
+        NSLog(@"startFirmwareUpgrade: started...");
+        resolver(@"success");
+    } failure:^(NSError *error) {
+        [TuyaRNUtils rejecterWithError:error handler:rejecter];
+    }];
+}
+
+RCT_EXPORT_METHOD(getWifiSignalStrength:(NSDictionary *)params resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    ThingSmartDevice *device = [self smartDeviceWithParams:params];
+    if (device == nil) {
+        NSError *error = [NSError errorWithDomain:@"com.hisense.rntuya"
+                                             code:1002
+                                         userInfo:@{NSLocalizedDescriptionKey: @"The device not found."}];
+        [TuyaRNUtils rejecterWithError:error handler:reject];
+        return;
+    }
+    [device getWifiSignalStrengthWithSuccess:^{
+        resolve(@"success");
+    } failure:^(NSError *error) {
+        [TuyaRNUtils rejecterWithError:error handler:reject];
+    }];
 }
 
 

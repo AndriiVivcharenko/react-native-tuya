@@ -185,13 +185,13 @@ class TuyaActivatorModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun openNetworkSettings(params: ReadableMap) {
-    val currentActivity = currentActivity
-    if (currentActivity == null) {
-      return
-    }
     try {
-      currentActivity.startActivity(Intent(Settings.ACTION_SETTINGS))
+      val intent = Intent(Settings.ACTION_SETTINGS)
+      // When starting an Activity from the application context we must set this flag
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      reactApplicationContext.startActivity(intent)
     } catch (e: Exception) {
+      Log.e("TuyaActivatorModule", "openNetworkSettings failed", e)
     }
 
   }

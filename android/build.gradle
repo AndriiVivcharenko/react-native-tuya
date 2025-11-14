@@ -2,6 +2,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'maven-publish'
 
+def getExtOrIntegerDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['ReactNativeTuya_' + name]).toInteger()
+}
 
 buildscript {
     ext.kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : '1.6.0'
@@ -20,11 +23,10 @@ buildscript {
 
 
 android {
-    compileSdkVersion 33
-
+    compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 33
+        minSdkVersion getExtOrIntegerDefault('minSdkVersion')
+        targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
         versionCode 1
         versionName "1.0"
 
@@ -46,14 +48,13 @@ configurations.all {
 }
 
 dependencies {
-    implementation 'com.alibaba:fastjson:1.1.67.android'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.alibaba:fastjson:1.2.83'
     implementation 'com.facebook.react:react-native:+'
 
     // The latest stable App SDK for Android.
-    implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.14.9'
-    implementation 'com.facebook.soloader:soloader:0.10.4+'
-    implementation 'com.thingclips.smart:thingsmart:5.5.2'
+    implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.11.0'
+    implementation 'com.facebook.soloader:soloader:0.10.5'
+    implementation 'com.thingclips.smart:thingsmart:6.7.7'
 }
 repositories {
     maven {
@@ -61,14 +62,14 @@ repositories {
         url "$projectDir/../node_modules/react-native/android"
     }
 
-    jcenter()
-    maven { url 'https://maven-other.tuya.com/repository/maven-releases/' }
-    maven { url "https://maven-other.tuya.com/repository/maven-commercial-releases/" }
-    maven { url 'https://jitpack.io' }
     google()
     mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
     maven { url 'https://maven.aliyun.com/repository/public' }
-    maven { url 'https://central.maven.org/maven2/' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://developer.huawei.com/repo/' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+
+    maven { url 'https://maven-other.tuya.com/repository/maven-releases/' }
+    maven { url "https://maven-other.tuya.com/repository/maven-commercial-releases/" }
 }

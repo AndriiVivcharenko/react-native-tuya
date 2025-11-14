@@ -6,6 +6,7 @@ import com.facebook.react.bridge.*
 import com.thingclips.smart.android.device.api.IGetDataPointStatCallback
 import com.thingclips.smart.android.device.bean.DataPointStatBean
 import com.thingclips.smart.android.device.enums.DataPointTypeEnum
+import com.thingclips.smart.device.bean.ThingDevUpgradeStatusBean
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.tuya.smart.rnsdk.utils.BridgeUtils
 import com.tuya.smart.rnsdk.utils.Constant.COMMAND
@@ -19,7 +20,9 @@ import com.tuya.smart.rnsdk.utils.Constant.getIResultCallback
 import com.tuya.smart.rnsdk.utils.ReactParamsCheck
 import com.tuya.smart.rnsdk.utils.TuyaReactUtils
 import com.thingclips.smart.sdk.api.IDevListener
+import com.thingclips.smart.sdk.api.IDevOTAListener
 import com.thingclips.smart.sdk.api.IThingDevice
+import com.thingclips.smart.sdk.api.WifiSignalListener
 
 
 class TuyaDeviceModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -45,7 +48,7 @@ class TuyaDeviceModule(reactContext: ReactApplicationContext) : ReactContextBase
     }
 
     @ReactMethod
-    fun registerDevListener(params: ReadableMap) {
+    fun registerDevListener(params: ReadableMap, promise: Promise) {
         if (ReactParamsCheck.checkParams(arrayOf(DEVID), params)) {
             device = getDevice(params.getString(DEVID) as String)
             device?.registerDevListener(object : IDevListener {
@@ -94,7 +97,23 @@ class TuyaDeviceModule(reactContext: ReactApplicationContext) : ReactContextBase
                     BridgeUtils.devListener(reactApplicationContext, map, params.getString(DEVID) as String)
                 }
             })
+            ThingHomeSdk.newOTAServiceInstance(params.getString(DEVID) as String).registerDevOTAListener(object : IDevOTAListener {
+                override fun firmwareUpgradeStatus(upgradeStatusBean: ThingDevUpgradeStatusBean) {
+                    val map = Arguments.createMap()
+                    map.putString("devId", params.getString(DEVID) as String)
+                    map.putString("type", "onFirmwareUpgradeStatus")
 
+                    val payload = Arguments.createMap();
+                    payload.putInt("progress", upgradeStatusBean.progress)
+                    payload.putString("status", upgradeStatusBean.statusText)
+                    payload.putInt("upgradeStatus", upgradeStatusBean.status.ordinal)
+                    payload.putString("error", upgradeStatusBean.errorMsg)
+
+                    map.putMap("payload", payload);
+
+                    BridgeUtils.devListener(reactApplicationContext, map, params.getString(DEVID) as String)
+                }
+            })
         }
     }
 
@@ -177,6 +196,21 @@ class TuyaDeviceModule(reactContext: ReactApplicationContext) : ReactContextBase
 
     fun getDevice(devId: String): IThingDevice {
         return ThingHomeSdk.newDeviceInstance(devId);
+    }
+
+    @ReactMethod
+    fun getWifiSignalStrength(params: ReadableMap, promise: Promise)  {
+        if (ReactParamsCheck.checkParams(arrayOf(DEVID), params)) {
+            getDevice(params.getString(DEVID) as String)?.requestWifiSignal(object : WifiSignalListener {
+                override fun onSignalValueFind(signal: String) {
+                    promise.resolve(signal)
+                }
+
+                override fun onError(errorCode: String?, errorMsg: String?) {
+                    promise.reject(errorCode, errorMsg)
+                }
+            })
+        }
     }
 
 }
