@@ -2,7 +2,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "types": "src/index.ts",
+  "typings": "src/index.ts",
   "keywords": [
     "react-native",
     "tuyasmart",
@@ -10,8 +11,14 @@
     "tuya"
   ],
   "files": [
-    "android",
-    "ios",
+    "android/src",
+    "android/README.md",
+    "android/build.gradle",
+    "android/gradle.properties",
+    "android/proguard-rules.pro",
+    "ios/RNTuyaSdk",
+    "ios/RNTuyaSdk.xcodeproj",
+    "ios/RNTuyaSdk.xcworkspace",
     "dist",
     "src",
     "RNTuyaSdk.podspec"
@@ -21,7 +28,7 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build"
+    "prepublishOnly": "tsdx build"
   },
   "peerDependencies": {
     "react-native": ">=0.70.5"
